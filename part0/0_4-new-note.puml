@@ -1,0 +1,18 @@
+@startuml new-note-0_4
+title 0.4: New Note
+note over browser: writing text in \n field & submit
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+note over server: add new note \n on server
+server-->browser: redirect to /notes
+note over browser: load html-code \n from server
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes 
+server-->browser: HTML-page
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+note over browser: start execute JS
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: [{content: "notetext", date: "19.04.2022}, ...]
+note over browser: adds received notes \n to the DOM
+@enduml

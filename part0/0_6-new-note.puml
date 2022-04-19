@@ -1,0 +1,10 @@
+@startuml new-note-0_6
+title 0.6: New Note
+note over browser: writing text in \n field & submit
+note over browser: push new note to local array
+note over browser: redraw notes and \n send new note to server
+
+browser -> server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note over server: add new note to array
+server --> browser: Status 201 {message: "note created"}
+@enduml
