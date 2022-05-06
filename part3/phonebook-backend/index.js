@@ -47,6 +47,8 @@ app.use(cors())
 app.use(express.json())
 app.use(logger)
 
+app.use(express.static('build'))
+
 app.get('/info', (_, response) => {
     response.send(
         `<p>Phonebook has info for ${
