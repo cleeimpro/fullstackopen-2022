@@ -49,6 +49,7 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('')
     const [filter, setFilter] = useState('')
     const [message, setMessage] = useState(null)
+    const messageTimeout = 3000;
 
     useEffect(() => {
         personService.getAll().then((persons) => setPersons(persons))
@@ -93,18 +94,17 @@ const App = () => {
                         })
                         setTimeout(() => {
                             setMessage(null)
-                        }, 5000)
+                        }, messageTimeout)
                     })
                     .catch((err) => {
-                        console.log(err)
+                        console.log(err.response.data)
                         setMessage({
-                            text: `Information of ${person.name} has been removed from server`,
+                            text: err.response.data.error,
                             type: 'error',
                         })
                         setTimeout(() => {
                             setMessage(null)
-                        }, 5000)
-                        setPersons(persons.filter((p) => p.id !== person.id))
+                        }, messageTimeout)
                     })
             }
         } else {
@@ -120,7 +120,17 @@ const App = () => {
                 setMessage({ text: `Added ${newPerson.name}`, type: 'info' })
                 setTimeout(() => {
                     setMessage(null)
-                }, 5000)
+                }, messageTimeout)
+            })
+            .catch((err) => {
+                console.log(err.response.data)
+                setMessage({
+                    text: err.response.data.error,
+                    type: 'error',
+                })
+                setTimeout(() => {
+                    setMessage(null)
+                }, messageTimeout)
             })
         }
     }
@@ -129,19 +139,26 @@ const App = () => {
         if (window.confirm(`Delete ${person.name}?`))
             personService
                 .remove(person.id)
-                .then(() =>
+                .then(() => {
                     setPersons(persons.filter((p) => p.id !== person.id))
-                )
-                .catch((err) => {
-                    console.log(err)
                     setMessage({
-                        text: `Information of ${person.name} has already been removed from server`,
-                        type: 'error',
+                        text: `Removed ${person.name}`,
+                        type: 'info',
                     })
-                    setPersons(persons.filter((p) => p.id !== person.id))
                     setTimeout(() => {
                         setMessage(null)
                     }, 5000)
+                })
+                .catch((err) => {
+                    console.log(err.response.data)
+                    setPersons(persons.filter((p) => p.id !== person.id))
+                    setMessage({
+                        text: err.response.data.error,
+                        type: 'error',
+                    })
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, messageTimeout)
                 })
     }
 
