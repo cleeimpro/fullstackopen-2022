@@ -85,7 +85,7 @@ describe('total likes', () => {
     })
 })
 
-describe.only('favorite blog', () => {
+describe('favorite blog', () => {
     test('of empty list is undefined', () => {
         expect(listHelper.favoriteBlog([])).toBe(undefined)
     })
@@ -96,5 +96,33 @@ describe.only('favorite blog', () => {
 
     test('returned the right one', () => {
         expect(listHelper.favoriteBlog(listWithBlogs)).toEqual(listWithBlogs[2])
+    })
+})
+
+describe('most blogs', () => {
+    test('of empty list is undefined', () => {
+        expect(listHelper.mostBlogs([])).toBe(undefined)
+    })
+
+    test('of list with one blog is the one author', () => {
+        expect(listHelper.mostBlogs(listWithOneBlog)).toEqual({ author: 'Edsger W. Dijkstra', blogs: 1 })
+    })
+
+    test('returned the right author', () => {
+        expect(listHelper.mostBlogs(listWithBlogs)).toEqual({ author: 'Robert C. Martin', blogs: 3 })
+    })
+})
+
+describe('most likes', () => {
+    test('of empty list is undefined', () => {
+        expect(listHelper.mostLikes([])).toEqual(undefined)
+    })
+
+    test('of list with one blog', () => {
+        expect(listHelper.mostLikes(listWithOneBlog)).toEqual({author: 'Edsger W. Dijkstra', likes:5})
+    })
+
+    test('returned the right author', () => {
+        expect(listHelper.mostLikes(listWithBlogs)).toEqual({author: 'Edsger W. Dijkstra', likes:17})
     })
 })
