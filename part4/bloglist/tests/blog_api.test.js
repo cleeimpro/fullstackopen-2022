@@ -3,11 +3,15 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
+
+    await User.deleteMany({})
+    await User.insertMany(helper.initialUsers)
 })
 
 describe('when there is initially some blogs saved', () => {
@@ -48,7 +52,7 @@ describe('viewing a specific blog', () => {
 
         const processedBlogToView = JSON.parse(JSON.stringify(blogToView))
 
-        expect(resultBlog.body).toEqual(processedBlogToView)
+        expect({...resultBlog.body, user: resultBlog.body.user.id}).toEqual(processedBlogToView)
     })
 
     test('fails with statuscode 404 if blog does not exist', async () => {
@@ -78,8 +82,13 @@ describe('addition of a new blog', () => {
             url: 'einfach.clefa.media'
         }
 
+        const loginResponse = await api
+            .post('/api/login')
+            .send({ username: 'clee', password: 'xerxes' })
+
         await api
             .post('/api/blogs')
+            .set('Authorization', `bearer ${loginResponse.body.token}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -93,13 +102,34 @@ describe('addition of a new blog', () => {
         )
     })
 
+    test('fails with status code 401 if no token is provided', async () => {
+        const newBlog = {
+            title: 'async/await simplifies making async calls',
+            author: 'clee',
+            url: 'einfach.clefa.media'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(401)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
+
     test('fails with status code 400 if data invalid', async () => {
         const newBlog = {
             likes: 3
         }
 
+        const loginResponse = await api
+            .post('/api/login')
+            .send({ username: 'clee', password: 'xerxes' })
+
         await api
             .post('/api/blogs')
+            .set('Authorization', `bearer ${loginResponse.body.token}`)
             .send(newBlog)
             .expect(400)
 
@@ -115,10 +145,13 @@ describe('update a single blog', () => {
         const blogToUpdate = blogsAtStart[0]
         const updatedBlog = { ...blogToUpdate, likes: 999 }
 
-        console.log(updatedBlog)
+        const loginResponse = await api
+            .post('/api/login')
+            .send({ username: 'clee', password: 'xerxes' })
 
         await api
             .put(`/api/blogs/${updatedBlog.id}`)
+            .set('Authorization', `bearer ${loginResponse.body.token}`)
             .send(updatedBlog)
             .expect(200)
 
@@ -131,29 +164,75 @@ describe('update a single blog', () => {
     test('fails with statuscode 404 if blog does not exist', async () => {
         const validNonexistingId = await helper.nonExistingId()
 
-        console.log(validNonexistingId)
+        const loginResponse = await api
+            .post('/api/login')
+            .send({ username: 'clee', password: 'xerxes' })
 
         await api
             .put(`/api/blogs/${validNonexistingId}`)
+            .set('Authorization', `bearer ${loginResponse.body.token}`)
             .expect(404)
     })
 
     test('fails with statuscode 400 if id is invalid', async () => {
         const invalidId = '5a3d5da59070081a82a3445'
 
+        const loginResponse = await api
+            .post('/api/login')
+            .send({ username: 'clee', password: 'xerxes' })
+
         await api
             .put(`/api/blogs/${invalidId}`)
+            .set('Authorization', `bearer ${loginResponse.body.token}`)
             .expect(400)
+    })
+
+    test('fails with statuscode 401 if no token is provided', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogsAtStart[0]
+        const updatedBlog = { ...blogToUpdate, likes: 999 }
+
+        await api
+            .put(`/api/blogs/${updatedBlog.id}`)
+            .send(updatedBlog)
+            .expect(401)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd.find(b => b.id === updatedBlog.id).likes).not.toBe(999)
+    })
+
+    test('fails with statuscode 401 if it is a foreign entry', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogsAtStart[0]
+        const updatedBlog = { ...blogToUpdate, likes: 999 }
+
+        const loginResponse = await api
+            .post('/api/login')
+            .send({ username: 'demo', password: 'xerxes' })
+
+        await api
+            .put(`/api/blogs/${updatedBlog.id}`)
+            .set('Authorization', `bearer ${loginResponse.body.token}`)
+            .send(updatedBlog)
+            .expect(401)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd.find(b => b.id === updatedBlog.id).likes).not.toBe(999)
     })
 })
 
 describe('deletion of a blog', () => {
-    test('succeeds with status code 204 if id is valid', async () => {
+    test('succeeds with status code 204 if id is valid and token is provided', async () => {
         const blogsAtStart = await helper.blogsInDb()
         const blogToDelete = blogsAtStart[0]
 
+        const loginResponse = await api
+            .post('/api/login')
+            .send({ username: 'clee', password: 'xerxes' })
+
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', `bearer ${loginResponse.body.token}`)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()

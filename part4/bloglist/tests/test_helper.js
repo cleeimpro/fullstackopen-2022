@@ -1,4 +1,5 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const initialBlogs = [
     {
@@ -7,6 +8,7 @@ const initialBlogs = [
         author: "Michael Chan",
         url: "https://reactpatterns.com/",
         likes: 7,
+        user: {_id: "627a3c136ac93081da941409"},
         __v: 0
     },
     {
@@ -15,6 +17,7 @@ const initialBlogs = [
         author: "Edsger W. Dijkstra",
         url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
         likes: 5,
+        user: {_id: "627a3c136ac93081da941409"},
         __v: 0
     },
     {
@@ -51,16 +54,43 @@ const initialBlogs = [
     }
 ]
 
+const initialUsers = [
+    {
+        _id: "627a3c136ac93081da941409",
+        username: "clee",
+        name: "Clemens",
+        passwordHash: "$2b$10$v6dYAvdCMC5Qk/m63AebjO.8uQ9.CQ7b50WwdKZ25A0mWKqF71pRC",
+        blogs: [
+            {_id: "5a422a851b54a676234d17f7"},
+            {_id: "5a422aa71b54a676234d17f8"} 
+        ],
+        __v: 0
+    },
+    {
+        _id: "627d58b2e6539b3fc65f74c6",
+        username: "demo",
+        name: "dedededemon",
+        passwordHash: "$2b$10$v6dYAvdCMC5Qk/m63AebjO.8uQ9.CQ7b50WwdKZ25A0mWKqF71pRC",
+        blogs: [],
+        __v: 0
+    }
+]
+
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
     return blogs.map(b => b.toJSON())
 }
 
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users.map(u => u.toJSON())
+}
+
 const nonExistingId = async () => {
-    const blog = new Blog({title: 'asd', author: 'asd', url: 'asd'})
+    const blog = new Blog({ title: 'asd', author: 'asd', url: 'asd' })
     await blog.save()
     await blog.remove()
     return blog._id.toString()
 }
 
-module.exports = { initialBlogs, blogsInDb, nonExistingId }
+module.exports = { initialBlogs, initialUsers, blogsInDb, usersInDb, nonExistingId }
