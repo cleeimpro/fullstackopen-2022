@@ -38,7 +38,6 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 
 blogsRouter.put('/:id', userExtractor, async (request, response) => {
     const body = request.body
-    const user = request.user
 
     const oldBlog = await Blog.findById(request.params.id).populate('user')
 
@@ -51,9 +50,6 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
         likes: body.likes,
         url: body.url
     }
-
-    if (!user.blogs.find(b => b.id === oldBlog.id) && oldBlog.user.id !== user.id)
-        return response.status(401).json({ error: 'user do not have the permission to update this blog' })
 
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
     if (updatedBlog)
