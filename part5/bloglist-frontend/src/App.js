@@ -66,6 +66,7 @@ const App = () => {
             notify(`a new blog ${returnedBlog.title} by ${returnedBlog.author} is added`)
             blogFormRef.current.toggleVisibility()
         } catch (error) {
+            notify(error.response.data.error, 'err')
             console.error(error)
         }
     }
@@ -76,6 +77,7 @@ const App = () => {
             setBlogs(blogs.map(b => b.id === blog.id ? returnedBlog : b))
             notify(`blog ${returnedBlog.title} by ${returnedBlog.author} liked`)
         } catch (error) {
+            notify(error.response.data.error, 'err')
             console.error(error)
         }
     }
@@ -88,6 +90,7 @@ const App = () => {
             setBlogs(blogs.filter(b => b.id !== blog.id))
             notify(`blog ${blog.title} by ${blog.author} removed`)
         } catch (error) {
+            notify(error.response.data.error, 'err')
             console.error(error)
         }
     }
@@ -104,9 +107,20 @@ const App = () => {
                 <BlogForm createBlog={addBlog} />
             </Togglable>
 
-            {blogs.sort((a, b) => a.likes < b.likes).map(blog =>
-                <Blog key={blog.id} blog={blog} likeBlog={likeBlog} removeBlog={removeBlog} userHasRights={blog.user.id === user.id} />
-            )}
+            {blogs
+                .sort((a, b) => a.likes < b.likes)
+                .map(blog => {
+                    console.log('user-id', user.id)
+                    console.log('blog-user-id', blog.user.id)
+                    return (<Blog
+                        key={blog.id}
+                        blog={blog}
+                        likeBlog={likeBlog}
+                        removeBlog={removeBlog}
+                        userHasRights={blog.user.id === user.id}
+                    />)
+                }
+                )}
         </div>
     )
 
