@@ -18,16 +18,15 @@ const Blog = ({ blog, likeBlog, removeBlog, userHasRights }) => {
 
     const content = () => (
         <div>
-            {blog.author} <br />
-            {blog.url} <br />
-            {blog.likes} likes <button onClick={() => likeBlog(blog)}>like</button><br />
-            {userHasRights && <button onClick={() => removeBlog(blog)}>remove</button>}
+            <div>{blog.url}</div>
+            <div>{blog.likes} likes <button onClick={() => likeBlog(blog)}>like</button></div>
+            <div>{userHasRights && <button onClick={() => removeBlog(blog)}>remove</button>}</div>
         </div>
     )
 
     return (
-        <div style={blogStyle}>
-            {blog.title}{' '}
+        <div style={blogStyle} className='blog'>
+            <b>{blog.title}</b> by {blog.author}
             <button onClick={toggleShow}>
                 {showContent ? 'hide' : 'show'}
             </button>

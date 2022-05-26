@@ -200,25 +200,6 @@ describe('update a single blog', () => {
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd.find(b => b.id === updatedBlog.id).likes).not.toBe(999)
     })
-
-    test('fails with statuscode 401 if it is a foreign entry', async () => {
-        const blogsAtStart = await helper.blogsInDb()
-        const blogToUpdate = blogsAtStart[0]
-        const updatedBlog = { ...blogToUpdate, likes: 999 }
-
-        const loginResponse = await api
-            .post('/api/login')
-            .send({ username: 'demo', password: 'xerxes' })
-
-        await api
-            .put(`/api/blogs/${updatedBlog.id}`)
-            .set('Authorization', `bearer ${loginResponse.body.token}`)
-            .send(updatedBlog)
-            .expect(401)
-
-        const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd.find(b => b.id === updatedBlog.id).likes).not.toBe(999)
-    })
 })
 
 describe('deletion of a blog', () => {
