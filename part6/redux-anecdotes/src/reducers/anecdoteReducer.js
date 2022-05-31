@@ -26,7 +26,9 @@ export const {appendAnecdote, updateAnecdote, setAnecdotes } = anecdoteSlice.act
 export const initializeAnecdotes = () => {
     return async dispatch => {
         const anecdotes = await anecdoteService.getAll()
-        dispatch(setAnecdotes(anecdotes))
+
+        const sortByVotes = (a, b) => a.votes < b.votes // only on reload
+        dispatch(setAnecdotes(anecdotes.sort(sortByVotes)))
     }
 }
 
