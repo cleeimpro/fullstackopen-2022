@@ -1,0 +1,40 @@
+###
+GET http://localhost:3003/api/blogs
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNsZWUiLCJpZCI6IjYyN2EzYzEzNmFjOTMwODFkYTk0MTQwOSIsImlhdCI6MTY1MzU3NjUxNiwiZXhwIjoxNjUzNTgwMTE2fQ.quIn7zKW4R75ztGvZfQht-hgnYwIkHzv2QsOISzqPWQ
+
+{
+    "title": "123nix, einfach nix",
+    "author": "clee",
+    "url": "clefa.media",
+    "likes": "5"
+}
+
+###
+PUT http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNsZWUiLCJpZCI6IjYyN2EzYzEzNmFjOTMwODFkYTk0MTQwOSIsImlhdCI6MTY1MjM3OTgwMiwiZXhwIjoxNjUyMzgzNDAyfQ.QrhRf5A1o3-wSbvz6tG-uCRlXGXcFbFZx4OG5IE122k
+
+{
+    "title": "123nix, einfach nix",
+    "author": "clee",
+    "url": "clefa.media",
+    "likes": "5"
+}
+
+### 
+DELETE http://localhost:3003/api/blogs/627d5352c6563269e7a60897
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNsZWUiLCJpZCI6IjYyN2EzYzEzNmFjOTMwODFkYTk0MTQwOSIsImlhdCI6MTY1MjM3OTgwMiwiZXhwIjoxNjUyMzgzNDAyfQ.QrhRf5A1o3-wSbvz6tG-uCRlXGXcFbFZx4OG5IE122k
+
+
+### COMMENTS
+POST http://localhost:3003/api/blogs/628be93eff53a2858bee29b7/comments
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNsZWUiLCJpZCI6IjYyN2EzYzEzNmFjOTMwODFkYTk0MTQwOSIsImlhdCI6MTY1ODI3MDMzOCwiZXhwIjoxNjU4MjczOTM4fQ.Ji7dENWnvLx0nAdt0qLvGxiBtHSH8y9TAt-J3-jCnZ4
+
+{
+    "comment": "einfach ein Kommentar"
+}
