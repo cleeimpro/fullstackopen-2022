@@ -1,26 +1,65 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import Login from './components/Login'
+import Recommend from './components/Recommend'
+import { useApolloClient } from '@apollo/client'
 
 const App = () => {
-  const [page, setPage] = useState('authors')
+    const [page, setPage] = useState('authors')
 
-  return (
-    <div>
-      <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
-      </div>
+    const [token, setToken] = useState(null)
+    const [error, setError] = useState(null)
 
-      <Authors show={page === 'authors'} />
+    const client = useApolloClient()
 
-      <Books show={page === 'books'} />
+    useEffect(() => {
+        setToken(localStorage.getItem('library-user-token'))
+    }, [])
 
-      <NewBook show={page === 'add'} />
-    </div>
-  )
+    const logout = () => {
+        setToken(null)
+        setPage('authors')
+        localStorage.clear()
+        client.resetStore()
+    }
+
+    return (
+        <div>
+            <div>
+                <button onClick={() => setPage('authors')}>authors</button>
+                <button onClick={() => setPage('books')}>books</button>
+                {token && (
+                    <>
+                        <button onClick={() => setPage('add')}>add book</button>
+                        <button onClick={() => setPage('recommend')}>
+                            recommend
+                        </button>
+                        <button onClick={logout}>logout</button>
+                    </>
+                )}
+                {!token && (
+                    <button onClick={() => setPage('login')}>login</button>
+                )}
+            </div>
+
+            <Authors show={page === 'authors'} token={token} />
+
+            <Books show={page === 'books'} />
+
+            <NewBook show={page === 'add'} />
+
+            <Recommend show={page === 'recommend'} />
+
+            <Login
+                show={page === 'login'}
+                setError={setError}
+                setToken={setToken}
+                setPage={setPage}
+            />
+        </div>
+    )
 }
 
 export default App

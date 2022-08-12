@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { ALL_AUTHORS, EDIT_AUTHOR, ALL_BOOKS } from '../queries'
+import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
 const BirthyearForm = () => {
     const result = useQuery(ALL_AUTHORS)
     const [editAuthor] = useMutation(EDIT_AUTHOR, {
-        refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+        refetchQueries: [{ query: ALL_AUTHORS }],
         onError: error => console.error(error)
     })
 

@@ -31,7 +31,7 @@ const typeDefs = gql`
     type Book {
         title: String!
         author: Author!
-        published: Int!
+        published: Int
         genres: [String!]!
         id: ID!
     }
@@ -45,7 +45,7 @@ const typeDefs = gql`
 
     type User {
         username: String!
-        favouriteGenre: String!
+        favoriteGenre: String
         id: ID!
     }
 
@@ -59,6 +59,7 @@ const typeDefs = gql`
         allBooks(author: String, genre: String): [Book!]
         allAuthors: [Author!]
         me: User
+        allUsers: [User]
     }
 
     type Mutation {
@@ -69,7 +70,7 @@ const typeDefs = gql`
             genres: [String!]
         ): Book
         editAuthor(name: String!, setBornTo: Int!): Author
-        createUser(username: String!, favouriteGenre: String!): User
+        createUser(username: String!, favoriteGenre: String!): User
         login(username: String!, password: String!): Token
     }
 `
@@ -93,7 +94,8 @@ const resolvers = {
         allAuthors: async () => Author.find({}),
         me: (root, args, context) => {
             return context.currentUser
-        }
+        },
+        allUsers: async () => User.find({}),
     },
     Author: {
         bookCount: async root => Book.find({ author: root.id }).countDocuments()
