@@ -18,7 +18,7 @@ const Login = ({ setError, setToken, show, setPage }) => {
 
     useEffect(() => {
         if (result.data) {
-            const token = result.data.login.value
+            const token = 'bearer ' + result.data.login.value
             setToken(token)
             console.log('set localstorage token')
             localStorage.setItem('library-user-token', token)
