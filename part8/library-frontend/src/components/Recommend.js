@@ -4,14 +4,12 @@ import { ALL_BOOKS, USER } from './../queries'
 const Recommend = ({ show }) => {
     const allBooks = useQuery(ALL_BOOKS)
     const user = useQuery(USER)
-
-    console.log('USER', user.data)
-    console.log('ALL_BOOKS', allBooks.data)
+    
     if (!show) return null
     if (allBooks.loading || user.loading) return <div>loading...</div>
 
     const books = allBooks.data.allBooks || []
-    const favoriteGenre = user.data.me.favoriteGenre || 'all'
+    const favoriteGenre = user.data.me?.favoriteGenre || 'all'
     const filteredBooks =
         favoriteGenre === 'all'
             ? books
