@@ -1,5 +1,16 @@
 const { gql } = require('@apollo/client')
 
+const BOOK_DETAILS = gql`
+    fragment BookDetails on Book {
+        title
+        author {
+            name
+        }
+        published
+        genres
+    }
+`
+
 export const CREATE_BOOK = gql`
     mutation createBook(
         $title: String!
@@ -36,26 +47,24 @@ export const EDIT_AUTHOR = gql`
 export const ALL_BOOKS = gql`
     query {
         allBooks {
-            title
-            author {
-                name
-            }
-            published
-            genres
+            ...BookDetails
         }
     }
+    ${BOOK_DETAILS}
 `
 
 export const BOOKS_BY_GENRE = gql`
     query booksByGenre($genreToSearch: String!){
         allBooks(genre: $genreToSearch) {
-            title
-            author {
-                name
-            }
-            published
-            genres
+            ...BookDetails
         }
+    }
+    ${BOOK_DETAILS}
+`
+
+export const ALL_GENRES = gql`
+    query {
+        allGenres
     }
 `
 
@@ -85,4 +94,14 @@ export const USER = gql`
             favoriteGenre
         }
     }
+`
+
+export const BOOK_ADDED = gql`
+    subscription {
+        bookAdded{
+            ...BookDetails
+        }
+    }
+
+    ${BOOK_DETAILS}
 `

@@ -1,27 +1,32 @@
-import { useState } from 'react'
-import { useQuery } from '@apollo/client'
-import { BOOKS_BY_GENRE } from './../queries'
+import React, { useState } from 'react'
+import { useQuery, useSubscription } from '@apollo/client'
+import { ALL_GENRES, BOOKS_BY_GENRE, BOOK_ADDED } from './../queries'
 
 const Books = ({ show }) => {
+    useSubscription(BOOK_ADDED, {
+        onData: ({ data }) => {
+            window.alert(`new book added: ${data.data.bookAdded.title}`)
+        }
+    })
+
     const [genre, setGenre] = useState('all')
-    const result = useQuery(BOOKS_BY_GENRE, {
+    const genresQueryResult = useQuery(ALL_GENRES)
+    const booksQueryResult = useQuery(BOOKS_BY_GENRE, {
         variables: { genreToSearch: genre }
     })
-    if (!show) return null
-    if (result.loading) return <div>loading...</div>
 
-    const books = result.data.allBooks || []
-    /*const filteredBooks =
-        genre === 'all' ? books : books.filter(b => b.genres.includes(genre))
-*/
-    const genres = [...new Set(books.flatMap(b => b.genres).filter(Boolean))]
+    if (!show) return null
+    if (genresQueryResult.loading || booksQueryResult.loading) return <div>loading...</div>
+
+    const genres = genresQueryResult.data.allGenres || []
+    const books = booksQueryResult.data.allBooks || []
 
     return (
         <div>
             <h2>books</h2>
 
             {books.length > 0 ? (
-                <>
+                <div>
                     <table>
                         <tbody>
                             <tr>
@@ -48,7 +53,7 @@ const Books = ({ show }) => {
                             all genres
                         </button>
                     </div>
-                </>
+                </div>
             ) : (
                 <div>no books in this library</div>
             )}
