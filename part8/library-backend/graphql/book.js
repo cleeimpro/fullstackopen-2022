@@ -3,6 +3,7 @@ import { GraphQLError } from 'graphql'
 import { PubSub } from 'graphql-subscriptions'
 
 import Book from '../models/book.js'
+import Author from '../models/author.js'
 
 const pubsub = new PubSub()
 
@@ -18,6 +19,7 @@ export const typeDef = gql`
     extend type Query {
         bookCount: Int!
         allBooks(author: String, genre: String): [Book!]
+        allGenres: [String]
     }
 
     extend type Mutation {
@@ -48,6 +50,10 @@ export const resolvers = {
                     book.genres.includes(args.genre)
                 )
             return filteredBooks
+        },
+        allGenres: async () => {
+            let books = await Book.find({})
+            return [...new Set(books.flatMap(b => b.genres).filter(Boolean))]
         }
     },
     Mutation: {

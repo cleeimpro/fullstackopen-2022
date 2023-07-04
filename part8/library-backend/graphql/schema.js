@@ -7,7 +7,7 @@ import { typeDef as Book, resolvers as bookResolvers } from './book.js'
 import { typeDef as Token } from './token.js'
 import { typeDef as User, resolvers as userResolvers } from './user.js'
 
-const gqlBase = gql`
+const graphQLStructure = gql`
     type Query {
         _empty: String
     }
@@ -24,6 +24,6 @@ const gqlBase = gql`
 const resolvers = {}
 
 export default makeExecutableSchema({
-    typeDefs: [gqlBase, Author, Book, Token, User],
+    typeDefs: [graphQLStructure, Author, Book, Token, User],
     resolvers: _.merge(resolvers, authorResolvers, bookResolvers, userResolvers)
 })
