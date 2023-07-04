@@ -1,3 +1,4 @@
+import React from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 

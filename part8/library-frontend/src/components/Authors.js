@@ -1,23 +1,22 @@
 import { useQuery } from '@apollo/client'
 import { ALL_AUTHORS } from './../queries'
 import BirthyearForm from './BirthyearForm'
+import React from 'react'
 
 const Authors = ({ show, token }) => {
-    const result = useQuery(ALL_AUTHORS)
+    const authorsQueryResult = useQuery(ALL_AUTHORS)
 
-    if (!show) {
-        return null
-    }
+    if (!show) return null
 
-    if (result.loading) return <div>loading...</div>
+    if (authorsQueryResult.loading) return <div>loading...</div>
 
-    const authors = result.data.allAuthors
+    const authors = authorsQueryResult.data.allAuthors || []
 
     return (
         <div>
             <h2>authors</h2>
             {authors.length > 0 ? (
-                <>
+                <React.Fragment>
                     <table>
                         <tbody>
                             <tr>
@@ -36,7 +35,7 @@ const Authors = ({ show, token }) => {
                     </table>
 
                     {token && <BirthyearForm />}
-                </>
+                </React.Fragment>
             ) : (
                 <div>no authors available</div>
             )}
