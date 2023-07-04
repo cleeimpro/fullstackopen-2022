@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -15,7 +16,9 @@ const App = () => {
     const client = useApolloClient()
 
     useEffect(() => {
-        setToken(localStorage.getItem('library-user-token'))
+        const token = localStorage.getItem('library-user-token')
+        if (token)
+            setToken(`Bearer ${token}`)
     }, [])
 
     const logout = () => {
@@ -31,17 +34,18 @@ const App = () => {
                 <button onClick={() => setPage('authors')}>authors</button>
                 <button onClick={() => setPage('books')}>books</button>
                 {token && (
-                    <>
+                    <React.Fragment>
                         <button onClick={() => setPage('add')}>add book</button>
                         <button onClick={() => setPage('recommend')}>
                             recommend
                         </button>
                         <button onClick={logout}>logout</button>
-                    </>
+                    </React.Fragment>
                 )}
                 {!token && (
                     <button onClick={() => setPage('login')}>login</button>
                 )}
+                {error && <p>{error}</p>}
             </div>
 
             <Authors show={page === 'authors'} token={token} />
