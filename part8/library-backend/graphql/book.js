@@ -84,6 +84,8 @@ export const resolvers = {
                 throw new UserInputError(error.message, { invalidArgs: args })
             }
 
+            await author.update({ books: [...author.books, book] })
+
             pubsub.publish('BOOK_ADDED', { bookAdded: book })
 
             return book

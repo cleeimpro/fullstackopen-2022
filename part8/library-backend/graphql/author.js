@@ -4,6 +4,13 @@ import Book from '../models/book.js'
 import Author from '../models/author.js'
 
 export const typeDef = gql`
+    type Author {
+        name: String!
+        born: Int
+        id: ID!
+        bookCount: Int!
+    }
+
     extend type Query {
         authorCount: Int!
         allAuthors(genre: String): [Author!]
@@ -12,22 +19,15 @@ export const typeDef = gql`
     extend type Mutation {
         editAuthor(name: String!, setBornTo: Int!): Author
     }
-
-    type Author {
-        name: String!
-        born: Int
-        id: ID!
-        bookCount: Int!
-    }
 `
 
 export const resolvers = {
     Author: {
-        bookCount: async root => Book.find({ author: root.id }).countDocuments()
+        bookCount: async root =>  root.books.length
     },
     Query: {
         authorCount: async () => Author.collection.countDocuments(),
-        allAuthors: async () => Author.find({})
+        allAuthors: async () => Author.find({}).populate('books')
     },
     Mutation: {
         editAuthor: async (root, args, context) => {
