@@ -2,21 +2,52 @@ import React, { useState } from 'react'
 import { useQuery, useSubscription } from '@apollo/client'
 import { ALL_GENRES, BOOKS_BY_GENRE, BOOK_ADDED } from './../queries'
 
-const Books = ({ show }) => {
-    useSubscription(BOOK_ADDED, {
-        onData: ({ data }) => {
-            window.alert(`new book added: ${data.data.bookAdded.title}`)
-        }
-    })
+export const updateBookCache = (cache, addedBook) => {
+    const uniqByTitle = allBooks => {
+        let seen = new Set()
+        return allBooks.filter(item => {
+            let title = item.title
+            return seen.has(title) ? false : seen.add(title)
+        })
+    }
 
+    const genres = [...addedBook.genres, 'all']
+
+    genres.forEach(genre => {
+        cache.updateQuery(
+            {
+                query: BOOKS_BY_GENRE,
+                variables: { genreToSearch: genre }
+            },
+            data => {
+                if (data)
+                    return {
+                        allBooks: uniqByTitle([...data.allBooks, addedBook])
+                    }
+            }
+        )
+    })
+}
+
+const Books = ({ show }) => {
     const [genre, setGenre] = useState('all')
     const genresQueryResult = useQuery(ALL_GENRES)
     const booksQueryResult = useQuery(BOOKS_BY_GENRE, {
         variables: { genreToSearch: genre }
     })
 
+    useSubscription(BOOK_ADDED, {
+        onData: ({ data, client }) => {
+            const addedBook = data.data.bookAdded
+
+            window.alert(`new book added: ${addedBook.title}`)
+            updateBookCache(client.cache, addedBook)
+        }
+    })
+
     if (!show) return null
-    if (genresQueryResult.loading || booksQueryResult.loading) return <div>loading...</div>
+    if (genresQueryResult.loading || booksQueryResult.loading)
+        return <div>loading...</div>
 
     const genres = genresQueryResult.data.allGenres || []
     const books = booksQueryResult.data.allBooks || []

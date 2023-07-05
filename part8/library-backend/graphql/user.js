@@ -7,7 +7,6 @@ import User from '../models/user.js'
 dotenv.config()
 const JWT_SECRET = process.env.JWT_SECRET
 
-
 export const typeDef = gql`
     type User {
         username: String!

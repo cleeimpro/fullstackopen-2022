@@ -3,8 +3,8 @@ import { useQuery } from '@apollo/client'
 import { ALL_BOOKS, USER } from './../queries'
 
 const Recommend = ({ show }) => {
-    const allBooks = useQuery(ALL_BOOKS)
     const user = useQuery(USER)
+    const allBooks = useQuery(ALL_BOOKS)
     
     if (!show) return null
     if (allBooks.loading || user.loading) return <div>loading...</div>

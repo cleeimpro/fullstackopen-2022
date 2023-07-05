@@ -44,7 +44,6 @@ const start = async () => {
 
     const serverCleanup = useServer({ schema }, wsServer)
 
-<<<<<<< HEAD
     const server = new ApolloServer({
         schema,
         plugins: [
@@ -56,76 +55,6 @@ const start = async () => {
                             await serverCleanup.dispose()
                         }
                     }
-=======
-    type Token {
-        value: String!
-    }
-
-    type Query {
-        bookCount: Int!
-        authorCount: Int!
-        allBooks(author: String, genre: String): [Book!]
-        allAuthors(genre: String): [Author!]
-        me: User
-        allUsers: [User]
-    }
-
-    type Mutation {
-        addBook(
-            title: String!
-            author: String!
-            published: Int
-            genres: [String!]
-        ): Book
-        editAuthor(name: String!, setBornTo: Int!): Author
-        createUser(username: String!, favoriteGenre: String!): User
-        login(username: String!, password: String!): Token
-    }
-`
-
-const resolvers = {
-    Query: {
-        bookCount: async () => Book.collection.countDocuments(),
-        authorCount: async () => Author.collection.countDocuments(),
-        allBooks: async (root, args) => {
-            let filteredBooks = await Book.find({}).populate('author')
-            if (args.author)
-                filteredBooks = filteredBooks.filter(
-                    book => book.author.name === args.author
-                )
-            if (args.genre && args.genre !== 'all')
-                filteredBooks = filteredBooks.filter(book =>
-                    book.genres.includes(args.genre)
-                )
-            return filteredBooks
-        },
-        allAuthors: async () => Author.find({}),
-        me: (root, args, context) => {
-            return context.currentUser
-        },
-        allUsers: async () => User.find({}),
-    },
-    Author: {
-        bookCount: async root => Book.find({ author: root.id }).countDocuments()
-    },
-    Mutation: {
-        addBook: async (root, args, context) => {
-            const currentUser = context.currentUser
-            if (!currentUser) {
-                throw new AuthenticationError('not authenticated')
-            }
-
-            let author = await Author.findOne({ name: args.author })
-
-            if (!author) {
-                author = new Author({ name: args.author })
-                try {
-                    await author.save()
-                } catch (error) {
-                    throw new UserInputError(error.message, {
-                        invalidArgs: args
-                    })
->>>>>>> 85236a1442dca674b2370e68546285dad8d6eeed
                 }
             }
         ]
