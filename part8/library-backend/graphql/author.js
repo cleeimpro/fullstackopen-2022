@@ -1,6 +1,5 @@
 import gql from 'graphql-tag'
 
-import Book from '../models/book.js'
 import Author from '../models/author.js'
 
 export const typeDef = gql`
